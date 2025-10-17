@@ -13,13 +13,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = SignUpViewController()
+        let rootViewController = LoginViewController(viewModel: LoginViewModel(authService: AuthService()))
+        let navigationController = UINavigationController(rootViewController: rootViewController)
+        navigationController.navigationBar.tintColor = .systemGreen
+        window.rootViewController = navigationController
         window.makeKeyAndVisible()
 
         self.window = window
-        
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

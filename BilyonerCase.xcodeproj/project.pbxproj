@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7256BAE32EA10BCD0068F4FA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7256BAE22EA10BCD0068F4FA /* GoogleService-Info.plist */; };
+		7256BAE62EA10CA10068F4FA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BAE52EA10CA10068F4FA /* FirebaseAnalytics */; };
+		7256BAE82EA10CA10068F4FA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BAE72EA10CA10068F4FA /* FirebaseAuth */; };
+		7256BAEA2EA10CA10068F4FA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BAE92EA10CA10068F4FA /* FirebaseFirestore */; };
+		7256BB792EA22F5D0068F4FA /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BB782EA22F5D0068F4FA /* RxCocoa */; };
+		7256BB7B2EA22F5D0068F4FA /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BB7A2EA22F5D0068F4FA /* RxSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7256BA9C2E9FBF120068F4FA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,10 +36,11 @@
 		7256BA852E9FBF0E0068F4FA /* BilyonerCase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BilyonerCase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7256BA9B2E9FBF120068F4FA /* BilyonerCaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilyonerCaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7256BAA52E9FBF120068F4FA /* BilyonerCaseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilyonerCaseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7256BAE22EA10BCD0068F4FA /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7256BAAD2E9FBF120068F4FA /* Exceptions for "BilyonerCase" folder in "BilyonerCase" target */ = {
+		7256BB7F2EA265850068F4FA /* Exceptions for "BilyonerCase" folder in "BilyonerCase" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -43,7 +53,7 @@
 		7256BA872E9FBF0E0068F4FA /* BilyonerCase */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				7256BAAD2E9FBF120068F4FA /* Exceptions for "BilyonerCase" folder in "BilyonerCase" target */,
+				7256BB7F2EA265850068F4FA /* Exceptions for "BilyonerCase" folder in "BilyonerCase" target */,
 			);
 			path = BilyonerCase;
 			sourceTree = "<group>";
@@ -65,6 +75,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7256BAE62EA10CA10068F4FA /* FirebaseAnalytics in Frameworks */,
+				7256BAE82EA10CA10068F4FA /* FirebaseAuth in Frameworks */,
+				7256BB7B2EA22F5D0068F4FA /* RxSwift in Frameworks */,
+				7256BB792EA22F5D0068F4FA /* RxCocoa in Frameworks */,
+				7256BAEA2EA10CA10068F4FA /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,6 +107,7 @@
 				7256BA9E2E9FBF120068F4FA /* BilyonerCaseTests */,
 				7256BAA82E9FBF120068F4FA /* BilyonerCaseUITests */,
 				7256BA862E9FBF0E0068F4FA /* Products */,
+				7256BAE22EA10BCD0068F4FA /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -125,6 +141,11 @@
 			);
 			name = BilyonerCase;
 			packageProductDependencies = (
+				7256BAE52EA10CA10068F4FA /* FirebaseAnalytics */,
+				7256BAE72EA10CA10068F4FA /* FirebaseAuth */,
+				7256BAE92EA10CA10068F4FA /* FirebaseFirestore */,
+				7256BB782EA22F5D0068F4FA /* RxCocoa */,
+				7256BB7A2EA22F5D0068F4FA /* RxSwift */,
 			);
 			productName = BilyonerCase;
 			productReference = 7256BA852E9FBF0E0068F4FA /* BilyonerCase.app */;
@@ -208,6 +229,10 @@
 			);
 			mainGroup = 7256BA7C2E9FBF0E0068F4FA;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7256BAE42EA10CA10068F4FA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				7256BB772EA22F5D0068F4FA /* XCRemoteSwiftPackageReference "RxSwift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7256BA862E9FBF0E0068F4FA /* Products */;
 			projectDirPath = "";
@@ -225,6 +250,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7256BAE32EA10BCD0068F4FA /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,6 +587,53 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7256BAE42EA10CA10068F4FA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.4.0;
+			};
+		};
+		7256BB772EA22F5D0068F4FA /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7256BAE52EA10CA10068F4FA /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7256BAE42EA10CA10068F4FA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		7256BAE72EA10CA10068F4FA /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7256BAE42EA10CA10068F4FA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		7256BAE92EA10CA10068F4FA /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7256BAE42EA10CA10068F4FA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		7256BB782EA22F5D0068F4FA /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7256BB772EA22F5D0068F4FA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		7256BB7A2EA22F5D0068F4FA /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7256BB772EA22F5D0068F4FA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7256BA7D2E9FBF0E0068F4FA /* Project object */;
 }
