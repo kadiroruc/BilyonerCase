@@ -16,12 +16,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let rootViewController = LoginViewController(viewModel: LoginViewModel(authService: AuthService()))
-        let navigationController = UINavigationController(rootViewController: rootViewController)
-        navigationController.navigationBar.tintColor = .systemGreen
-        window.rootViewController = navigationController
-        window.makeKeyAndVisible()
-
+        
+        AppDIContainer.shared.configure()
+        
+        let coordinator = AppCoordinator(
+            window: window,
+            container: AppDIContainer.shared.container
+        )
+        
+        coordinator.start()
+        
         self.window = window
     }
 
