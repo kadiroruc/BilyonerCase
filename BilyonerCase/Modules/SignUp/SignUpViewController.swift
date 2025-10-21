@@ -22,60 +22,60 @@ final class SignUpViewController: UIViewController {
     private let viewModel: SignUpViewModelProtocol
     
     private let nameTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Name"
-        tf.borderStyle = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let nameTextField = UITextField()
+        nameTextField.placeholder = "Name"
+        nameTextField.borderStyle = .none
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+        return nameTextField
     }()
     private let surnameTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Surname"
-        tf.borderStyle = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let surnameTextField = UITextField()
+        surnameTextField.placeholder = "Surname"
+        surnameTextField.borderStyle = .none
+        surnameTextField.translatesAutoresizingMaskIntoConstraints = false
+        return surnameTextField
     }()
     
     private let emailTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Email"
-        tf.borderStyle = .none
-        tf.autocapitalizationType = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let emailTextField = UITextField()
+        emailTextField.placeholder = "Email"
+        emailTextField.borderStyle = .none
+        emailTextField.autocapitalizationType = .none
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
+        return emailTextField
     }()
     
     private let passwordTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Password"
-        tf.borderStyle = .none
-        tf.autocapitalizationType = .none
-        tf.isSecureTextEntry = true
-        tf.textContentType = .none
-        tf.autocorrectionType = .no
-        tf.spellCheckingType = .no
-        tf.smartQuotesType = .no
-        tf.smartDashesType = .no
-        tf.smartInsertDeleteType = .no
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let passwordTextField = UITextField()
+        passwordTextField.placeholder = "Password"
+        passwordTextField.borderStyle = .none
+        passwordTextField.autocapitalizationType = .none
+        passwordTextField.isSecureTextEntry = true
+        passwordTextField.textContentType = .none
+        passwordTextField.autocorrectionType = .no
+        passwordTextField.spellCheckingType = .no
+        passwordTextField.smartQuotesType = .no
+        passwordTextField.smartDashesType = .no
+        passwordTextField.smartInsertDeleteType = .no
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
+        return passwordTextField
     }()
     
     private let signUpButton: UIButton = {
-        let bt = UIButton()
-        bt.setTitle("Sign Up", for: .normal)
-        bt.setTitleColor(.white, for: .normal)
-        bt.backgroundColor = .systemGreen
-        bt.layer.cornerRadius = 16
-        bt.translatesAutoresizingMaskIntoConstraints = false
-        return bt
+        let signUpButton = UIButton()
+        signUpButton.setTitle("Sign Up", for: .normal)
+        signUpButton.setTitleColor(.white, for: .normal)
+        signUpButton.backgroundColor = .systemGreen
+        signUpButton.layer.cornerRadius = 16
+        signUpButton.translatesAutoresizingMaskIntoConstraints = false
+        return signUpButton
     }()
     
     private let activityIndicator: UIActivityIndicatorView = {
-        let ai = UIActivityIndicatorView(style: .medium)
-        ai.translatesAutoresizingMaskIntoConstraints = false
-        ai.hidesWhenStopped = true
-        return ai
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
     }()
     
     init(viewModel: SignUpViewModelProtocol) {

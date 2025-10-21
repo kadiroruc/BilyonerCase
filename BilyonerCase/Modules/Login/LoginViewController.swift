@@ -18,58 +18,58 @@ final class LoginViewController: UIViewController {
     private let viewModel: LoginViewModelProtocol
 
     private let emailTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Email"
-        tf.borderStyle = .none
-        tf.autocapitalizationType = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let emailTextField = UITextField()
+        emailTextField.placeholder = "Email"
+        emailTextField.borderStyle = .none
+        emailTextField.autocapitalizationType = .none
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
+        return emailTextField
     }()
 
     private let passwordTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Password"
-        tf.borderStyle = .none
-        tf.isSecureTextEntry = true
-        tf.autocapitalizationType = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let passwordTextField = UITextField()
+        passwordTextField.placeholder = "Password"
+        passwordTextField.borderStyle = .none
+        passwordTextField.isSecureTextEntry = true
+        passwordTextField.autocapitalizationType = .none
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
+        return passwordTextField
     }()
 
     private let loginButton: UIButton = {
-        let bt = UIButton(type: .system)
-        bt.setTitle("Login", for: .normal)
-        bt.setTitleColor(.white, for: .normal)
-        bt.backgroundColor = .systemGreen
-        bt.layer.cornerRadius = 16
-        bt.translatesAutoresizingMaskIntoConstraints = false
-        return bt
+        let loginButton = UIButton(type: .system)
+        loginButton.setTitle("Login", for: .normal)
+        loginButton.setTitleColor(.white, for: .normal)
+        loginButton.backgroundColor = .systemGreen
+        loginButton.layer.cornerRadius = 16
+        loginButton.translatesAutoresizingMaskIntoConstraints = false
+        return loginButton
     }()
     
     private let noAccountLabel: UILabel = {
-        let lbl = UILabel()
-        lbl.text = "No account? Sign up"
-        lbl.textColor = .systemGreen
-        lbl.textAlignment = .center
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        return lbl
+        let noAccountLabel = UILabel()
+        noAccountLabel.text = "No account? Sign up"
+        noAccountLabel.textColor = .systemGreen
+        noAccountLabel.textAlignment = .center
+        noAccountLabel.translatesAutoresizingMaskIntoConstraints = false
+        return noAccountLabel
     }()
 
     private let toSignUpButton: UIButton = {
-        let bt = UIButton(type: .system)
-        bt.setTitle("Sign Up Now", for: .normal)
-        bt.setTitleColor(.white, for: .normal)
-        bt.backgroundColor = .systemGreen
-        bt.layer.cornerRadius = 16
-        bt.translatesAutoresizingMaskIntoConstraints = false
-        return bt
+        let toSignUpButton = UIButton(type: .system)
+        toSignUpButton.setTitle("Sign Up Now", for: .normal)
+        toSignUpButton.setTitleColor(.white, for: .normal)
+        toSignUpButton.backgroundColor = .systemGreen
+        toSignUpButton.layer.cornerRadius = 16
+        toSignUpButton.translatesAutoresizingMaskIntoConstraints = false
+        return toSignUpButton
     }()
 
     private let activityIndicator: UIActivityIndicatorView = {
-        let ai = UIActivityIndicatorView(style: .medium)
-        ai.translatesAutoresizingMaskIntoConstraints = false
-        ai.hidesWhenStopped = true
-        return ai
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
     }()
 
     init(viewModel: LoginViewModelProtocol) {
