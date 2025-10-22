@@ -1,5 +1,5 @@
 //
-//  HomeViewController.swift
+//  BulletinViewController.swift
 //  BilyonerCase
 //
 //  Created by Abdulkadir Oruç on 20.10.2025.
@@ -28,7 +28,7 @@ fileprivate enum UI {
     static let errorAlertButtonTitle = "OK"
 }
 
-protocol HomeViewDelegate: AnyObject {
+protocol BulletinViewProtocol: AnyObject {
     func showLoading(_ show: Bool)
     func showError(_ message: String)
     func showLeagues(_ leagues: [League])
@@ -36,9 +36,9 @@ protocol HomeViewDelegate: AnyObject {
 }
 
 
-final class HomeViewController: UIViewController {
+final class BulletinViewController: UIViewController {
 
-    private let viewModel: HomeViewModelDelegate
+    private let viewModel: BulletinViewModelProtocol
     private var filteredLeagues: [League] = []
     private var selectedLeague: League?
 
@@ -77,7 +77,7 @@ final class HomeViewController: UIViewController {
 
     // MARK: - Init
 
-    init(viewModel: HomeViewModelDelegate) {
+    init(viewModel: BulletinViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewModel.view = self
@@ -140,7 +140,7 @@ final class HomeViewController: UIViewController {
 
 // MARK: - UICollectionView
 
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension BulletinViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == leaguesCollectionView { return filteredLeagues.count }
@@ -171,6 +171,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             let match = viewModel.matches[indexPath.item]
             cell.configure(with: match)
+            cell.delegate = self
             return cell
         }
 
@@ -196,9 +197,9 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
 }
 
-// MARK: - HomeViewDelegate
+// MARK: - BulletinViewProtocol
 
-extension HomeViewController: HomeViewDelegate {
+extension BulletinViewController: BulletinViewProtocol {
 
     func showLoading(_ show: Bool) {
         show ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
@@ -226,7 +227,7 @@ extension HomeViewController: HomeViewDelegate {
 
 // MARK: - Search
 
-extension HomeViewController: UISearchResultsUpdating {
+extension BulletinViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text, !text.isEmpty else {
             filteredLeagues = viewModel.leagues
@@ -236,4 +237,14 @@ extension HomeViewController: UISearchResultsUpdating {
         filteredLeagues = viewModel.leagues.filter { $0.title.lowercased().contains(text.lowercased()) }
         leaguesCollectionView.reloadData()
     }
+}
+
+// MARK: - MatchCellDelegate
+
+extension BulletinViewController: MatchCellDelegate {
+    func matchCell(_ cell: MatchCell, didSelectBet bet: MatchBet) {
+        viewModel.selectBet(bet)
+        matchesCollectionView.reloadData()
+    }
+
 }

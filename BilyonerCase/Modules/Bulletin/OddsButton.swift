@@ -84,7 +84,7 @@ final class OddsButton: UIButton {
         )
         setAttributedTitle(title, for: .normal)
     }
-
+    
     func setSelectedTop(_ selected: Bool) {
         if selected && backgroundColor == .systemGreen{
             backgroundColor = .white

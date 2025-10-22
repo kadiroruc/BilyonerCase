@@ -9,11 +9,11 @@ import Foundation
 import Alamofire
 import RxSwift
 
-protocol APIClientDelegate {
+protocol APIClientProtocol {
     func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) -> Single<T>
 }
 
-final class APIClient: APIClientDelegate {
+final class APIClient: APIClientProtocol {
 
     func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) -> Single<T> {
         return Single.create { single in

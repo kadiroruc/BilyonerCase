@@ -36,10 +36,8 @@ final class AppCoordinator {
     }
 
     private func showMainFlow() {
-        let homeVC = factory.makeHomeViewController()
-        let nav = UINavigationController(rootViewController: homeVC)
-        navigationController = nav
-        window.rootViewController = nav
+        let tabBarController = MainTabBarController(factory: factory)
+        window.rootViewController = tabBarController
     }
 }
 

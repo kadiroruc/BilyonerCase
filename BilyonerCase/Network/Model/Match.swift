@@ -15,6 +15,7 @@ struct Match: Decodable {
     let homeTeam: String
     let awayTeam: String
     let bookmakers: [Bookmaker]
+    var selectedOdd: String?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -24,5 +25,6 @@ struct Match: Decodable {
         case homeTeam = "home_team"
         case awayTeam = "away_team"
         case bookmakers
+        case selectedOdd
     }
 }
