@@ -314,6 +314,8 @@
 /* Begin XCBuildConfiguration section */
 		7256BAAF2E9FBF120068F4FA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 7256BA872E9FBF0E0068F4FA /* BilyonerCase */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

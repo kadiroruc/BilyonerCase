@@ -8,8 +8,8 @@
 import Foundation
 import RxSwift
 
-protocol HomeViewModelProtocol: AnyObject {
-    var view: HomeViewProtocol? { get set }
+protocol HomeViewModelDelegate: AnyObject {
+    var view: HomeViewDelegate? { get set }
     var leagues: [League] { get }
     var matches: [Match] { get }
     
@@ -17,44 +17,52 @@ protocol HomeViewModelProtocol: AnyObject {
     func fetchMatches(leagueKey: String)
 }
 
-final class HomeViewModel: HomeViewModelProtocol {
+final class HomeViewModel: HomeViewModelDelegate {
 
-    weak var view: HomeViewProtocol?
-    private let apiClient: APIClientProtocol
+    weak var view: HomeViewDelegate?
+    private let apiClient: APIClientDelegate
     private let disposeBag = DisposeBag()
 
     var leagues: [League] = []
     var matches: [Match] = []
 
-    init(apiClient: APIClientProtocol) {
+    init(apiClient: APIClientDelegate) {
         self.apiClient = apiClient
     }
 
     func fetchLeagues() {
         view?.showLoading(true)
         apiClient.request(OddsAPI.getLeagues, type: [League].self)
-            .subscribe(onSuccess: { [weak self] leagues in
-                self?.view?.showLoading(false)
-                self?.leagues = leagues.filter({ $0.has_outrights == false })
-                self?.view?.showLeagues(self?.leagues ?? [])
-            }, onFailure: { [weak self] error in
-                self?.view?.showLoading(false)
-                self?.view?.showError(error.localizedDescription)
-            })
+            .subscribe(
+                with: self,
+                onSuccess: { owner, leagues in
+                    owner.view?.showLoading(false)
+                    owner.leagues = leagues.filter { !$0.has_outrights }
+                    owner.view?.showLeagues(owner.leagues)
+                },
+                onFailure: { owner, error in
+                    owner.view?.showLoading(false)
+                    owner.view?.showError(error.localizedDescription)
+                }
+            )
             .disposed(by: disposeBag)
+
     }
 
     func fetchMatches(leagueKey: String) {
         view?.showLoading(true)
         apiClient.request(OddsAPI.getMatches(leagueKey: leagueKey), type: [Match].self)
-            .subscribe(onSuccess: { [weak self] matches in
-                self?.view?.showLoading(false)
-                self?.matches = matches
-                self?.view?.showMatches()
-            }, onFailure: { [weak self] error in
-                self?.view?.showLoading(false)
-                self?.view?.showError(error.localizedDescription)
-            })
+            .subscribe(with: self,
+                       onSuccess: { owner, matches in
+                           owner.view?.showLoading(false)
+                           owner.matches = matches
+                           owner.view?.showMatches()
+                       },
+                       onFailure: { owner, error in
+                           owner.view?.showLoading(false)
+                           owner.view?.showError(error.localizedDescription)
+                       })
             .disposed(by: disposeBag)
+
     }
 }

@@ -9,24 +9,24 @@ import Foundation
 import RxSwift
 import FirebaseAuth
 
-protocol SignUpViewModelProtocol: AnyObject {
-    var view: SignUpViewProtocol? { get set }
+protocol SignUpViewModelDelegate: AnyObject {
+    var view: SignUpViewDelegate? { get set }
     func signUp(name: String, email: String, password: String)
 }
 
 final class SignUpViewModel {
 
-    weak var view: SignUpViewProtocol?
-    private let authService: AuthServiceProtocol
+    weak var view: SignUpViewDelegate?
+    private let authService: AuthServiceDelegate
     private let disposeBag = DisposeBag()
 
-    init(authService: AuthServiceProtocol) {
+    init(authService: AuthServiceDelegate) {
         self.authService = authService
     }
 }
 
-// MARK: - SignUpViewModelProtocol
-extension SignUpViewModel: SignUpViewModelProtocol {
+// MARK: - SignUpViewModelDelegate
+extension SignUpViewModel: SignUpViewModelDelegate {
 
     func signUp(name: String, email: String, password: String) {
         guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
@@ -47,18 +47,21 @@ extension SignUpViewModel: SignUpViewModelProtocol {
         view?.showLoading(true)
 
         authService.register(email: email, password: password)
-            .subscribe(onSuccess: { [weak self] user in
-                DispatchQueue.main.async {
-                    self?.view?.showLoading(false)
-                    self?.view?.showSuccess(user)
-                }
-            }, onFailure: { [weak self] error in
-                DispatchQueue.main.async {
-                    self?.view?.showLoading(false)
-                    self?.view?.showError(error.localizedDescription)
-                }
-            })
+            .subscribe(with: self,
+                       onSuccess: { owner, user in
+                           DispatchQueue.main.async {
+                               owner.view?.showLoading(false)
+                               owner.view?.showSuccess(user)
+                           }
+                       },
+                       onFailure: { owner, error in
+                           DispatchQueue.main.async {
+                               owner.view?.showLoading(false)
+                               owner.view?.showError(error.localizedDescription)
+                           }
+                       })
             .disposed(by: disposeBag)
+
     }
 }
 

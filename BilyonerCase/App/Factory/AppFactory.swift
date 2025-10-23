@@ -18,18 +18,18 @@ final class AppFactory {
     // MARK: - Dependency Registration
     private func registerDependencies() {
         // Services
-        container.register { AuthService() as AuthServiceProtocol }
-        container.register { APIClient() as APIClientProtocol }
+        container.register { AuthService() as AuthServiceDelegate }
+        container.register { APIClient() as APIClientDelegate }
 
         // ViewModels
         container.register {
-            LoginViewModel(authService: self.container.resolve()) as LoginViewModelProtocol
+            LoginViewModel(authService: self.container.resolve()) as LoginViewModelDelegate
         }
         container.register {
-            SignUpViewModel(authService: self.container.resolve()) as SignUpViewModelProtocol
+            SignUpViewModel(authService: self.container.resolve()) as SignUpViewModelDelegate
         }
         container.register {
-            HomeViewModel(apiClient: self.container.resolve()) as HomeViewModelProtocol
+            HomeViewModel(apiClient: self.container.resolve()) as HomeViewModelDelegate
         }
 
         // ViewControllers

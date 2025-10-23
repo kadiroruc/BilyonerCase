@@ -9,7 +9,12 @@ import Foundation
 import Alamofire
 
 enum OddsAPI: Endpoint {
-    private static let apiKey = "13be82b867b231fac69d5d73b0512914"
+    private static var apiKey: String {
+        guard let key = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else {
+            fatalError("OddsAPIKey not found in Info.plist")
+        }
+        return key
+    }
 
     case getLeagues
     case getMatches(leagueKey: String)

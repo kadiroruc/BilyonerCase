@@ -7,7 +7,28 @@
 
 import UIKit
 
-protocol HomeViewProtocol: AnyObject {
+// MARK: - Constants
+
+fileprivate enum Layout {
+    static let collectionViewSpacing: CGFloat = 12
+    static let standardMargin: CGFloat = 16
+    static let leaguesCollectionViewHeight: CGFloat = 60
+    static let matchCellHeight: CGFloat = 120
+    static let leagueCellHeight: CGFloat = 44
+    static let leagueCellHorizontalPadding: CGFloat = 32
+}
+
+fileprivate enum Typography {
+    static let leagueTitleFont = UIFont.systemFont(ofSize: 16, weight: .medium)
+}
+
+fileprivate enum UI {
+    static let searchPlaceholder = "Search League"
+    static let errorAlertTitle = "Error"
+    static let errorAlertButtonTitle = "OK"
+}
+
+protocol HomeViewDelegate: AnyObject {
     func showLoading(_ show: Bool)
     func showError(_ message: String)
     func showLeagues(_ leagues: [League])
@@ -17,28 +38,30 @@ protocol HomeViewProtocol: AnyObject {
 
 final class HomeViewController: UIViewController {
 
-    private let viewModel: HomeViewModelProtocol
+    private let viewModel: HomeViewModelDelegate
     private var filteredLeagues: [League] = []
     private var selectedLeague: League?
 
     private let leaguesCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 12
+        layout.minimumLineSpacing = Layout.collectionViewSpacing
         let leaguesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         leaguesCollectionView.translatesAutoresizingMaskIntoConstraints = false
         leaguesCollectionView.showsHorizontalScrollIndicator = false
         leaguesCollectionView.backgroundColor = .clear
+        leaguesCollectionView.accessibilityIdentifier = "BulletinViewController.leaguesCollectionView"
         return leaguesCollectionView
     }()
 
     private let matchesCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 12
+        layout.minimumLineSpacing = Layout.collectionViewSpacing
         let matchesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         matchesCollectionView.translatesAutoresizingMaskIntoConstraints = false
         matchesCollectionView.backgroundColor = .clear
+        matchesCollectionView.accessibilityIdentifier = "BulletinViewController.matchesCollectionView"
         return matchesCollectionView
     }()
 
@@ -46,6 +69,7 @@ final class HomeViewController: UIViewController {
         let activityIndicator = UIActivityIndicatorView(style: .large)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
+        activityIndicator.accessibilityIdentifier = "BulletinViewController.activityIndicator"
         return activityIndicator
     }()
 
@@ -53,7 +77,7 @@ final class HomeViewController: UIViewController {
 
     // MARK: - Init
 
-    init(viewModel: HomeViewModelProtocol) {
+    init(viewModel: HomeViewModelDelegate) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewModel.view = self
@@ -77,16 +101,16 @@ final class HomeViewController: UIViewController {
         [leaguesCollectionView, matchesCollectionView, activityIndicator].forEach { view.addSubview($0) }
 
         NSLayoutConstraint.activate([
-            leaguesCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            leaguesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            leaguesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            leaguesCollectionView.heightAnchor.constraint(equalToConstant: 60)
+            leaguesCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Layout.standardMargin),
+            leaguesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.standardMargin),
+            leaguesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Layout.standardMargin),
+            leaguesCollectionView.heightAnchor.constraint(equalToConstant: Layout.leaguesCollectionViewHeight)
         ])
         
         NSLayoutConstraint.activate([
-            matchesCollectionView.topAnchor.constraint(equalTo: leaguesCollectionView.bottomAnchor, constant: 16),
-            matchesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            matchesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            matchesCollectionView.topAnchor.constraint(equalTo: leaguesCollectionView.bottomAnchor, constant: Layout.standardMargin),
+            matchesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.standardMargin),
+            matchesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Layout.standardMargin),
             matchesCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
         
@@ -109,7 +133,7 @@ final class HomeViewController: UIViewController {
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search League"
+        searchController.searchBar.placeholder = UI.searchPlaceholder
         navigationItem.searchController = searchController
     }
 }
@@ -125,17 +149,31 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == leaguesCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LeagueCell.identifier, for: indexPath) as! LeagueCell
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: LeagueCell.identifier,
+                for: indexPath
+            ) as? LeagueCell else {
+                return UICollectionViewCell()
+            }
+            
             let league = filteredLeagues[indexPath.item]
             cell.configure(with: league.title)
             cell.contentView.backgroundColor = league.key == selectedLeague?.key ? .systemGreen : .secondarySystemBackground
             return cell
+            
         } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchCell.identifier, for: indexPath) as! MatchCell
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: MatchCell.identifier,
+                for: indexPath
+            ) as? MatchCell else {
+                return UICollectionViewCell()
+            }
+            
             let match = viewModel.matches[indexPath.item]
             cell.configure(with: match)
             return cell
         }
+
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -150,25 +188,25 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == leaguesCollectionView {
             let league = filteredLeagues[indexPath.item]
-            let width = league.title.size(withAttributes: [.font: UIFont.systemFont(ofSize: 16, weight: .medium)]).width + 32
-            return CGSize(width: width, height: 44)
+            let width = league.title.size(withAttributes: [.font: Typography.leagueTitleFont]).width + Layout.leagueCellHorizontalPadding
+            return CGSize(width: width, height: Layout.leagueCellHeight)
         } else {
-            return CGSize(width: collectionView.frame.width, height: 120)
+            return CGSize(width: collectionView.frame.width, height: Layout.matchCellHeight)
         }
     }
 }
 
-// MARK: - HomeViewProtocol
+// MARK: - HomeViewDelegate
 
-extension HomeViewController: HomeViewProtocol {
+extension HomeViewController: HomeViewDelegate {
 
     func showLoading(_ show: Bool) {
         show ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }
 
     func showError(_ message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: UI.errorAlertTitle, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: UI.errorAlertButtonTitle, style: .default))
         present(alert, animated: true)
     }
 

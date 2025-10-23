@@ -11,7 +11,6 @@ extension UITextField {
     func addBottomBorder(color: UIColor = .lightGray, height: CGFloat = 1.0) {
         self.borderStyle = .none
 
-        // Önce varsa kaldır
         self.layer.sublayers?.removeAll(where: { $0.name == "bottomBorder" })
 
         let border = CALayer()

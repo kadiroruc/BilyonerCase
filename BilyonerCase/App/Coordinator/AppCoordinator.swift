@@ -6,11 +6,11 @@
 //
 
 import UIKit
-import FirebaseAuth
 
 final class AppCoordinator {
     private let window: UIWindow
     private let factory: AppFactory
+    private let userManager = UserManager.shared
 
     private var navigationController: UINavigationController?
 
@@ -20,7 +20,7 @@ final class AppCoordinator {
     }
 
     func start() {
-        if Auth.auth().currentUser != nil {
+        if userManager.isUserAvailable {
             showMainFlow()
         } else {
             showAuthFlow()

@@ -9,24 +9,24 @@ import Foundation
 import RxSwift
 import FirebaseAuth
 
-protocol LoginViewModelProtocol: AnyObject {
-    var view: LoginViewProtocol? { get set }
+protocol LoginViewModelDelegate: AnyObject {
+    var view: LoginViewDelegate? { get set }
     func login(email: String, password: String)
 }
 
 final class LoginViewModel {
 
-    weak var view: LoginViewProtocol?
-    private let authService: AuthServiceProtocol
+    weak var view: LoginViewDelegate?
+    private let authService: AuthServiceDelegate
     private let disposeBag = DisposeBag()
 
-    init(authService: AuthServiceProtocol) {
+    init(authService: AuthServiceDelegate) {
         self.authService = authService
     }
 }
 
-// MARK: - LoginViewModelProtocol
-extension LoginViewModel: LoginViewModelProtocol {
+// MARK: - LoginViewModelDelegate
+extension LoginViewModel: LoginViewModelDelegate {
 
     func login(email: String, password: String) {
         guard email.isValidEmail else {
@@ -42,17 +42,20 @@ extension LoginViewModel: LoginViewModelProtocol {
         view?.showLoading(true)
 
         authService.login(email: email, password: password)
-            .subscribe(onSuccess: { [weak self] user in
-                DispatchQueue.main.async {
-                    self?.view?.showLoading(false)
-                    self?.view?.showSuccess(user)
-                }
-            }, onFailure: { [weak self] error in
-                DispatchQueue.main.async {
-                    self?.view?.showLoading(false)
-                    self?.view?.showError(error.localizedDescription)
-                }
-            })
+            .subscribe(with: self,
+                       onSuccess: { owner, user in
+                           DispatchQueue.main.async {
+                               owner.view?.showLoading(false)
+                               owner.view?.showSuccess(user)
+                           }
+                       },
+                       onFailure: { owner, error in
+                           DispatchQueue.main.async {
+                               owner.view?.showLoading(false)
+                               owner.view?.showError(error.localizedDescription)
+                           }
+                       })
             .disposed(by: disposeBag)
+
     }
 }

@@ -13,7 +13,6 @@ extension String {
         return self.range(of: pattern, options: [.regularExpression, .caseInsensitive]) != nil
     }
     
-    /// ISO8601 tarih string'ini yerel tarih-saat formatına çevirir.
     func formattedToLocalString(dateStyle: DateFormatter.Style = .medium,
                                 timeStyle: DateFormatter.Style = .short,
                                 locale: Locale = Locale(identifier: "tr_TR")) -> String {
