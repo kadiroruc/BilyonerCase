@@ -10,7 +10,41 @@ import RxSwift
 import RxCocoa
 import FirebaseAuth
 
-protocol SignUpViewProtocol: AnyObject {
+// MARK: - Constants
+
+fileprivate enum Layout {
+    static let standardMargin: CGFloat = 16
+    static let textFieldHeight: CGFloat = 50
+    static let buttonHeight: CGFloat = 50
+    static let buttonCornerRadius: CGFloat = 16
+    static let stackViewSpacing: CGFloat = 20
+    static let stackViewTopMargin: CGFloat = 100
+}
+
+fileprivate enum Typography {
+    static let buttonFont = UIFont.systemFont(ofSize: 16, weight: .medium)
+}
+
+fileprivate enum Colors {
+    static let buttonBackgroundColor = UIColor.systemGreen
+    static let buttonTextColor = UIColor.white
+    static let viewBackgroundColor = UIColor.systemBackground
+}
+
+fileprivate enum UI {
+    static let namePlaceholder = "Name"
+    static let surnamePlaceholder = "Surname"
+    static let emailPlaceholder = "Email"
+    static let passwordPlaceholder = "Password"
+    static let signUpButtonTitle = "Sign Up"
+    static let backToLoginButtonTitle = "Back to Login"
+    static let errorAlertTitle = "Error"
+    static let errorAlertButtonTitle = "OK"
+    static let successAlertTitle = "Success"
+    static let successAlertButtonTitle = "OK"
+}
+
+protocol SignUpViewDelegate: AnyObject {
     func showLoading(_ show: Bool)
     func showError(_ message: String)
     func showSuccess(_ user: User)
@@ -19,66 +53,72 @@ protocol SignUpViewProtocol: AnyObject {
 
 final class SignUpViewController: UIViewController {
     
-    private let viewModel: SignUpViewModelProtocol
+    private let viewModel: SignUpViewModelDelegate
     
     private let nameTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Name"
-        tf.borderStyle = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let nameTextField = UITextField()
+        nameTextField.placeholder = UI.namePlaceholder
+        nameTextField.borderStyle = .none
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+        nameTextField.accessibilityIdentifier = "SignUpViewController.nameTextField"
+        return nameTextField
     }()
     private let surnameTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Surname"
-        tf.borderStyle = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let surnameTextField = UITextField()
+        surnameTextField.placeholder = UI.surnamePlaceholder
+        surnameTextField.borderStyle = .none
+        surnameTextField.translatesAutoresizingMaskIntoConstraints = false
+        surnameTextField.accessibilityIdentifier = "SignUpViewController.surnameTextField"
+        return surnameTextField
     }()
     
     private let emailTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Email"
-        tf.borderStyle = .none
-        tf.autocapitalizationType = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let emailTextField = UITextField()
+        emailTextField.placeholder = UI.emailPlaceholder
+        emailTextField.borderStyle = .none
+        emailTextField.autocapitalizationType = .none
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
+        emailTextField.accessibilityIdentifier = "SignUpViewController.emailTextField"
+        return emailTextField
     }()
     
     private let passwordTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Password"
-        tf.borderStyle = .none
-        tf.autocapitalizationType = .none
-        tf.isSecureTextEntry = true
-        tf.textContentType = .none
-        tf.autocorrectionType = .no
-        tf.spellCheckingType = .no
-        tf.smartQuotesType = .no
-        tf.smartDashesType = .no
-        tf.smartInsertDeleteType = .no
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let passwordTextField = UITextField()
+        passwordTextField.placeholder = UI.passwordPlaceholder
+        passwordTextField.borderStyle = .none
+        passwordTextField.autocapitalizationType = .none
+        passwordTextField.isSecureTextEntry = true
+        passwordTextField.textContentType = .none
+        passwordTextField.autocorrectionType = .no
+        passwordTextField.spellCheckingType = .no
+        passwordTextField.smartQuotesType = .no
+        passwordTextField.smartDashesType = .no
+        passwordTextField.smartInsertDeleteType = .no
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
+        passwordTextField.accessibilityIdentifier = "SignUpViewController.passwordTextField"
+        return passwordTextField
     }()
     
     private let signUpButton: UIButton = {
-        let bt = UIButton()
-        bt.setTitle("Sign Up", for: .normal)
-        bt.setTitleColor(.white, for: .normal)
-        bt.backgroundColor = .systemGreen
-        bt.layer.cornerRadius = 16
-        bt.translatesAutoresizingMaskIntoConstraints = false
-        return bt
+        let signUpButton = UIButton()
+        signUpButton.setTitle(UI.signUpButtonTitle, for: .normal)
+        signUpButton.setTitleColor(Colors.buttonTextColor, for: .normal)
+        signUpButton.backgroundColor = Colors.buttonBackgroundColor
+        signUpButton.layer.cornerRadius = Layout.buttonCornerRadius
+        signUpButton.translatesAutoresizingMaskIntoConstraints = false
+        signUpButton.accessibilityIdentifier = "SignUpViewController.signUpButton"
+        return signUpButton
     }()
     
     private let activityIndicator: UIActivityIndicatorView = {
-        let ai = UIActivityIndicatorView(style: .medium)
-        ai.translatesAutoresizingMaskIntoConstraints = false
-        ai.hidesWhenStopped = true
-        return ai
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.accessibilityIdentifier = "SignUpViewController.activityIndicator"
+        return activityIndicator
     }()
     
-    init(viewModel: SignUpViewModelProtocol) {
+    init(viewModel: SignUpViewModelDelegate) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewModel.view = self
@@ -96,38 +136,38 @@ final class SignUpViewController: UIViewController {
     
     private func setupViews(){
         
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.viewBackgroundColor
         
         [nameTextField, surnameTextField, emailTextField, passwordTextField, signUpButton, activityIndicator].forEach {view.addSubview($0)}
         
         NSLayoutConstraint.activate([
-            nameTextField.leftAnchor.constraint(equalTo: view.leftAnchor,constant: 16),
+            nameTextField.leftAnchor.constraint(equalTo: view.leftAnchor,constant: Layout.standardMargin),
             nameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -94),
-            nameTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5, constant: -16)
+            nameTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
-            surnameTextField.leftAnchor.constraint(equalTo: nameTextField.rightAnchor,constant: 16),
+            surnameTextField.leftAnchor.constraint(equalTo: nameTextField.rightAnchor,constant: Layout.standardMargin),
             surnameTextField.topAnchor.constraint(equalTo: nameTextField.topAnchor),
-            surnameTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            surnameTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
-            emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor,constant: 16),
+            emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor,constant: Layout.standardMargin),
             emailTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 32),
-            emailTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            emailTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
-            passwordTextField.leftAnchor.constraint(equalTo: view.leftAnchor,constant: 16),
+            passwordTextField.leftAnchor.constraint(equalTo: view.leftAnchor,constant: Layout.standardMargin),
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 32),
-            passwordTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            passwordTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
-            signUpButton.leftAnchor.constraint(equalTo: view.leftAnchor,constant: 16),
+            signUpButton.leftAnchor.constraint(equalTo: view.leftAnchor,constant: Layout.standardMargin),
             signUpButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 64),
-            signUpButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            signUpButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
@@ -166,21 +206,21 @@ final class SignUpViewController: UIViewController {
 
 }
 
-extension SignUpViewController: SignUpViewProtocol {
+extension SignUpViewController: SignUpViewDelegate {
     func showLoading(_ show: Bool) {
         show ? self.activityIndicator.startAnimating() : self.activityIndicator.stopAnimating()
         self.signUpButton.isEnabled = !show
     }
 
     func showError(_ message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: UI.errorAlertTitle, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: UI.errorAlertButtonTitle, style: .default))
         self.present(alert, animated: true)
     }
 
     func showSuccess(_ user: User) {
-        let alert = UIAlertController(title: "Success", message: "Account created for \(user.email ?? "")", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+        let alert = UIAlertController(title: UI.successAlertTitle, message: "Account created for \(user.email ?? "")", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: UI.successAlertButtonTitle, style: .default) { _ in
             self.navigationController?.popViewController(animated: true)
         })
         self.present(alert, animated: true)

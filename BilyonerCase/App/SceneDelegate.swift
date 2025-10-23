@@ -17,11 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        AppDIContainer.shared.configure()
-        
         let coordinator = AppCoordinator(
-            window: window,
-            container: AppDIContainer.shared.container
+            window: window
         )
         
         coordinator.start()

@@ -13,6 +13,7 @@
 		7256BAEA2EA10CA10068F4FA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BAE92EA10CA10068F4FA /* FirebaseFirestore */; };
 		7256BB792EA22F5D0068F4FA /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BB782EA22F5D0068F4FA /* RxCocoa */; };
 		7256BB7B2EA22F5D0068F4FA /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7256BB7A2EA22F5D0068F4FA /* RxSwift */; };
+		729DE2DA2EA6584E00A1388B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 729DE2D92EA6584E00A1388B /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 				7256BAE62EA10CA10068F4FA /* FirebaseAnalytics in Frameworks */,
 				7256BAE82EA10CA10068F4FA /* FirebaseAuth in Frameworks */,
 				7256BB7B2EA22F5D0068F4FA /* RxSwift in Frameworks */,
+				729DE2DA2EA6584E00A1388B /* Alamofire in Frameworks */,
 				7256BB792EA22F5D0068F4FA /* RxCocoa in Frameworks */,
 				7256BAEA2EA10CA10068F4FA /* FirebaseFirestore in Frameworks */,
 			);
@@ -146,6 +148,7 @@
 				7256BAE92EA10CA10068F4FA /* FirebaseFirestore */,
 				7256BB782EA22F5D0068F4FA /* RxCocoa */,
 				7256BB7A2EA22F5D0068F4FA /* RxSwift */,
+				729DE2D92EA6584E00A1388B /* Alamofire */,
 			);
 			productName = BilyonerCase;
 			productReference = 7256BA852E9FBF0E0068F4FA /* BilyonerCase.app */;
@@ -232,6 +235,7 @@
 			packageReferences = (
 				7256BAE42EA10CA10068F4FA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				7256BB772EA22F5D0068F4FA /* XCRemoteSwiftPackageReference "RxSwift" */,
+				729DE2D82EA6584E00A1388B /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7256BA862E9FBF0E0068F4FA /* Products */;
@@ -310,6 +314,8 @@
 /* Begin XCBuildConfiguration section */
 		7256BAAF2E9FBF120068F4FA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 7256BA872E9FBF0E0068F4FA /* BilyonerCase */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -605,6 +611,14 @@
 				minimumVersion = 6.9.0;
 			};
 		};
+		729DE2D82EA6584E00A1388B /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -632,6 +646,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7256BB772EA22F5D0068F4FA /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
+		};
+		729DE2D92EA6584E00A1388B /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 729DE2D82EA6584E00A1388B /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

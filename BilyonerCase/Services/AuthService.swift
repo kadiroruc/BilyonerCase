@@ -9,12 +9,12 @@ import Foundation
 import FirebaseAuth
 import RxSwift
 
-protocol AuthServiceProtocol {
+protocol AuthServiceDelegate {
     func login(email: String, password: String) -> Single<User>
     func register(email: String, password: String) -> Single<User>
 }
 
-final class AuthService: AuthServiceProtocol {
+final class AuthService: AuthServiceDelegate {
     func login(email: String, password: String) -> Single<User> {
         return Single.create { single in
             Auth.auth().signIn(withEmail: email, password: password) { result, error in

@@ -1,0 +1,11 @@
+//
+//  Config.xcconfig
+//  BilyonerCase
+//
+//  Created by Abdulkadir Oruç on 23.10.2025.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+API_KEY = "13be82b867b231fac69d5d73b0512914"

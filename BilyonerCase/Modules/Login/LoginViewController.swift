@@ -7,7 +7,37 @@
 import UIKit
 import FirebaseAuth
 
-protocol LoginViewProtocol: AnyObject {
+// MARK: - Constants
+
+fileprivate enum Layout {
+    static let standardMargin: CGFloat = 16
+    static let textFieldHeight: CGFloat = 50
+    static let buttonHeight: CGFloat = 50
+    static let buttonCornerRadius: CGFloat = 16
+    static let stackViewSpacing: CGFloat = 20
+    static let stackViewTopMargin: CGFloat = 100
+}
+
+fileprivate enum Typography {
+    static let buttonFont = UIFont.systemFont(ofSize: 16, weight: .medium)
+}
+
+fileprivate enum Colors {
+    static let buttonBackgroundColor = UIColor.systemGreen
+    static let buttonTextColor = UIColor.white
+    static let viewBackgroundColor = UIColor.systemBackground
+}
+
+fileprivate enum UI {
+    static let emailPlaceholder = "Email"
+    static let passwordPlaceholder = "Password"
+    static let loginButtonTitle = "Login"
+    static let signUpButtonTitle = "Sign Up"
+    static let errorAlertTitle = "Error"
+    static let errorAlertButtonTitle = "OK"
+}
+
+protocol LoginViewDelegate: AnyObject {
     func showLoading(_ show: Bool)
     func showError(_ message: String)
     func showSuccess(_ user: User)
@@ -15,64 +45,70 @@ protocol LoginViewProtocol: AnyObject {
 
 final class LoginViewController: UIViewController {
 
-    private let viewModel: LoginViewModelProtocol
+    private let viewModel: LoginViewModelDelegate
 
     private let emailTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Email"
-        tf.borderStyle = .none
-        tf.autocapitalizationType = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let emailTextField = UITextField()
+        emailTextField.placeholder = UI.emailPlaceholder
+        emailTextField.borderStyle = .none
+        emailTextField.autocapitalizationType = .none
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
+        emailTextField.accessibilityIdentifier = "LoginViewController.emailTextField"
+        return emailTextField
     }()
 
     private let passwordTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Password"
-        tf.borderStyle = .none
-        tf.isSecureTextEntry = true
-        tf.autocapitalizationType = .none
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+        let passwordTextField = UITextField()
+        passwordTextField.placeholder = UI.passwordPlaceholder
+        passwordTextField.borderStyle = .none
+        passwordTextField.isSecureTextEntry = true
+        passwordTextField.autocapitalizationType = .none
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
+        passwordTextField.accessibilityIdentifier = "LoginViewController.passwordTextField"
+        return passwordTextField
     }()
 
     private let loginButton: UIButton = {
-        let bt = UIButton(type: .system)
-        bt.setTitle("Login", for: .normal)
-        bt.setTitleColor(.white, for: .normal)
-        bt.backgroundColor = .systemGreen
-        bt.layer.cornerRadius = 16
-        bt.translatesAutoresizingMaskIntoConstraints = false
-        return bt
+        let loginButton = UIButton(type: .system)
+        loginButton.setTitle(UI.loginButtonTitle, for: .normal)
+        loginButton.setTitleColor(Colors.buttonTextColor, for: .normal)
+        loginButton.backgroundColor = Colors.buttonBackgroundColor
+        loginButton.layer.cornerRadius = Layout.buttonCornerRadius
+        loginButton.translatesAutoresizingMaskIntoConstraints = false
+        loginButton.accessibilityIdentifier = "LoginViewController.loginButton"
+        return loginButton
     }()
     
     private let noAccountLabel: UILabel = {
-        let lbl = UILabel()
-        lbl.text = "No account? Sign up"
-        lbl.textColor = .systemGreen
-        lbl.textAlignment = .center
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        return lbl
+        let noAccountLabel = UILabel()
+        noAccountLabel.text = "No account? Sign up"
+        noAccountLabel.textColor = .systemGreen
+        noAccountLabel.textAlignment = .center
+        noAccountLabel.translatesAutoresizingMaskIntoConstraints = false
+        noAccountLabel.accessibilityIdentifier = "LoginViewController.noAccountLabel"
+        return noAccountLabel
     }()
 
     private let toSignUpButton: UIButton = {
-        let bt = UIButton(type: .system)
-        bt.setTitle("Sign Up Now", for: .normal)
-        bt.setTitleColor(.white, for: .normal)
-        bt.backgroundColor = .systemGreen
-        bt.layer.cornerRadius = 16
-        bt.translatesAutoresizingMaskIntoConstraints = false
-        return bt
+        let toSignUpButton = UIButton(type: .system)
+        toSignUpButton.setTitle(UI.signUpButtonTitle, for: .normal)
+        toSignUpButton.setTitleColor(Colors.buttonTextColor, for: .normal)
+        toSignUpButton.backgroundColor = Colors.buttonBackgroundColor
+        toSignUpButton.layer.cornerRadius = Layout.buttonCornerRadius
+        toSignUpButton.translatesAutoresizingMaskIntoConstraints = false
+        toSignUpButton.accessibilityIdentifier = "LoginViewController.toSignUpButton"
+        return toSignUpButton
     }()
 
     private let activityIndicator: UIActivityIndicatorView = {
-        let ai = UIActivityIndicatorView(style: .medium)
-        ai.translatesAutoresizingMaskIntoConstraints = false
-        ai.hidesWhenStopped = true
-        return ai
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.accessibilityIdentifier = "LoginViewController.activityIndicator"
+        return activityIndicator
     }()
 
-    init(viewModel: LoginViewModelProtocol) {
+    init(viewModel: LoginViewModelDelegate) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewModel.view = self
@@ -99,7 +135,7 @@ final class LoginViewController: UIViewController {
 
 
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.viewBackgroundColor
         
         [emailTextField,
          passwordTextField,
@@ -110,21 +146,21 @@ final class LoginViewController: UIViewController {
         ].forEach { view.addSubview($0) }
         
         NSLayoutConstraint.activate([
-            emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Layout.standardMargin),
             emailTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -79),
-            emailTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            emailTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
-            passwordTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            passwordTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Layout.standardMargin),
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 32),
-            passwordTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            passwordTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
-            loginButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            loginButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Layout.standardMargin),
             loginButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 64),
-            loginButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            loginButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Layout.standardMargin)
         ])
         
         NSLayoutConstraint.activate([
@@ -173,8 +209,8 @@ final class LoginViewController: UIViewController {
     }
 }
 
-// MARK: - LoginViewProtocol
-extension LoginViewController: LoginViewProtocol {
+// MARK: - LoginViewDelegate
+extension LoginViewController: LoginViewDelegate {
     func showLoading(_ show: Bool) {
         show ? self.activityIndicator.startAnimating() : self.activityIndicator.stopAnimating()
         self.loginButton.isEnabled = !show
@@ -182,8 +218,8 @@ extension LoginViewController: LoginViewProtocol {
     }
 
     func showError(_ message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: UI.errorAlertTitle, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: UI.errorAlertButtonTitle, style: .default))
         self.present(alert, animated: true)
     }
 

@@ -6,28 +6,25 @@
 //
 
 import UIKit
-import FirebaseAuth
 
 final class AppCoordinator {
     private let window: UIWindow
-    private let container: DIContainer
     private let factory: AppFactory
+    private let userManager = UserManager.shared
 
     private var navigationController: UINavigationController?
 
-    init(window: UIWindow, container: DIContainer) {
+    init(window: UIWindow) {
         self.window = window
-        self.container = container
-        self.factory = AppFactory(container: container)
+        self.factory = AppFactory()
     }
 
     func start() {
-//        if Auth.auth().currentUser != nil {
-//            showMainFlow()
-//        } else {
-//            showAuthFlow()
-//        }
-        showAuthFlow()
+        if userManager.isUserAvailable {
+            showMainFlow()
+        } else {
+            showAuthFlow()
+        }
         window.makeKeyAndVisible()
     }
 
@@ -39,6 +36,10 @@ final class AppCoordinator {
     }
 
     private func showMainFlow() {
+        let homeVC = factory.makeHomeViewController()
+        let nav = UINavigationController(rootViewController: homeVC)
+        navigationController = nav
+        window.rootViewController = nav
     }
 }
 
