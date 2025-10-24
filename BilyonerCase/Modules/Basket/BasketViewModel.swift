@@ -8,21 +8,32 @@
 import Foundation
 import RxSwift
 
-protocol BasketViewModelProtocol: AnyObject {
-    var view: BasketViewProtocol? { get set }
+protocol BasketViewModelDelegate: AnyObject {
+    var view: BasketViewDelegate? { get set }
     
     var bets: [MatchBet] { get }
-    func bind(to bulletinVM: BulletinViewModelProtocol)
-
+    var couponAmount: Double { get }
+    var totalOdds: Double { get }
+    var maxWin: Double { get }
+    var balance: Double { get }
+    
+    func bind(to bulletinVM: BulletinViewModelDelegate)
+    func updateCouponAmount(_ amount: Double)
+    func clearAllBets()
+    func playNow()
 }
 
-final class BasketViewModel: BasketViewModelProtocol {
-    weak var view: BasketViewProtocol?
+final class BasketViewModel: BasketViewModelDelegate {
+    weak var view: BasketViewDelegate?
     
     private let disposeBag = DisposeBag()
     private(set) var bets: [MatchBet] = []
+    private(set) var couponAmount: Double = 50.0
+    private(set) var balance: Double = 1000.0
+    private weak var bulletinVM: BulletinViewModelDelegate?
 
-    func bind(to bulletinVM: BulletinViewModelProtocol) {
+    func bind(to bulletinVM: BulletinViewModelDelegate) {
+        self.bulletinVM = bulletinVM
         bulletinVM.betSelected
             .subscribe(onNext: { [weak self] bet in
                 self?.addOrUpdateBet(bet)
@@ -41,12 +52,45 @@ final class BasketViewModel: BasketViewModelProtocol {
             bets.append(bet)
         }
         view?.showBets()
+        view?.updateBadgeValue(bets.count)
+        view?.updateCouponDetails()
+    }
+    
+    var totalOdds: Double {
+        return bets.compactMap { Double($0.value) }.reduce(1.0, *)
+    }
+    
+    var maxWin: Double {
+        return couponAmount * totalOdds
+    }
+    
+    func updateCouponAmount(_ amount: Double) {
+        couponAmount = max(50.0, amount)
+        
+        if amount < 50.0 || balance < amount {
+            view?.enablePlayNowButton(isEnabled: false)
+        }else{
+            view?.enablePlayNowButton(isEnabled: true)
+        }
+    }
+    
+    func clearAllBets() {
+        bets.removeAll()
+        bulletinVM?.clearAllSelectedOdds()
+        view?.showBets()
+        view?.updateBadgeValue(bets.count)
+        view?.updateCouponDetails()
+    }
+    
+    func playNow() {
+        guard !bets.isEmpty else {
+            view?.showError("Please select at least one match")
+            return
+        }
+        
+        balance -= couponAmount
+        clearAllBets()
+        
+        view?.showSuccess("Your bet has been placed successfully")
     }
 }
-
-
-
-
-
-
-

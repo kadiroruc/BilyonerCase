@@ -58,6 +58,9 @@ final class UserManager: UserManagerDelegate {
             try Auth.auth().signOut()
             refresh()
         } catch {
+            print("Logout error: \(error.localizedDescription)")
+            
+            refresh()
         }
     }
 }

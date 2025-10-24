@@ -8,7 +8,6 @@
 import UIKit
 
 final class AppFactory {
-    static let shared = AppFactory()
     private let container = DIContainer.shared
     
     init() {
@@ -19,7 +18,7 @@ final class AppFactory {
     private func registerDependencies() {
         // Services
         container.register { AuthService() as AuthServiceDelegate }
-        container.register { APIClient() as APIClientProtocol }
+        container.register { APIClient() as APIClientDelegate }
 
         // ViewModels
         container.register {
@@ -29,10 +28,10 @@ final class AppFactory {
             SignUpViewModel(authService: self.container.resolve()) as SignUpViewModelDelegate
         }
         container.registerSingleton {
-            BulletinViewModel(apiClient: self.container.resolve()) as BulletinViewModelProtocol
+            BulletinViewModel(apiClient: self.container.resolve()) as BulletinViewModelDelegate
         }
         container.register {
-            BasketViewModel() as BasketViewModelProtocol
+            BasketViewModel() as BasketViewModelDelegate
         }
 
         // ViewControllers

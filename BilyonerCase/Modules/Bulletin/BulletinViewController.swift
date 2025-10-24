@@ -7,8 +7,6 @@
 
 import UIKit
 
-// MARK: - Constants
-
 fileprivate enum Layout {
     static let collectionViewSpacing: CGFloat = 12
     static let standardMargin: CGFloat = 16
@@ -26,9 +24,10 @@ fileprivate enum UI {
     static let searchPlaceholder = "Search League"
     static let errorAlertTitle = "Error"
     static let errorAlertButtonTitle = "OK"
+    static let logoutBarButtonItemImage = "rectangle.portrait.and.arrow.right"
 }
 
-protocol BulletinViewProtocol: AnyObject {
+protocol BulletinViewDelegate: AnyObject {
     func showLoading(_ show: Bool)
     func showError(_ message: String)
     func showLeagues(_ leagues: [League])
@@ -38,7 +37,7 @@ protocol BulletinViewProtocol: AnyObject {
 
 final class BulletinViewController: UIViewController {
 
-    private let viewModel: BulletinViewModelProtocol
+    private let viewModel: BulletinViewModelDelegate
     private var filteredLeagues: [League] = []
     private var selectedLeague: League?
 
@@ -72,12 +71,19 @@ final class BulletinViewController: UIViewController {
         activityIndicator.accessibilityIdentifier = "BulletinViewController.activityIndicator"
         return activityIndicator
     }()
+    
+    private lazy var logoutBarButtonItem: UIBarButtonItem = {
+        let logoutBarButtonItem = UIBarButtonItem(image: UIImage(systemName: UI.logoutBarButtonItemImage), style: .done, target: self, action: #selector(logoutBarButtonItemTapped))
+        logoutBarButtonItem.accessibilityIdentifier = "BulletinViewController.logoutBarButtonItem"
+        logoutBarButtonItem.tintColor = .systemGreen
+        return logoutBarButtonItem
+    }()
 
     private let searchController = UISearchController(searchResultsController: nil)
 
     // MARK: - Init
 
-    init(viewModel: BulletinViewModelProtocol) {
+    init(viewModel: BulletinViewModelDelegate) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewModel.view = self
@@ -98,6 +104,8 @@ final class BulletinViewController: UIViewController {
 
     private func setupUI() {
         view.backgroundColor = .systemBackground
+        navigationItem.rightBarButtonItem = logoutBarButtonItem
+        navigationItem.title = "Bulletin"
         [leaguesCollectionView, matchesCollectionView, activityIndicator].forEach { view.addSubview($0) }
 
         NSLayoutConstraint.activate([
@@ -135,6 +143,10 @@ final class BulletinViewController: UIViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = UI.searchPlaceholder
         navigationItem.searchController = searchController
+    }
+    
+    @objc func logoutBarButtonItemTapped(){
+        UserManager.shared.logout()
     }
 }
 
@@ -197,9 +209,9 @@ extension BulletinViewController: UICollectionViewDelegate, UICollectionViewData
     }
 }
 
-// MARK: - BulletinViewProtocol
+// MARK: - BulletinViewDelegate
 
-extension BulletinViewController: BulletinViewProtocol {
+extension BulletinViewController: BulletinViewDelegate {
 
     func showLoading(_ show: Bool) {
         show ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()

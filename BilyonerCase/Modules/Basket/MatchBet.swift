@@ -7,6 +7,6 @@
 
 struct MatchBet {
     let match: Match
-    let oddType: String // örn: "MS1", "MSX", "MS2"
-    let value: String   // seçilen oran değeri
+    let oddType: String
+    let value: String
 }

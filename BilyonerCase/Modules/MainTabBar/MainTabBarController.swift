@@ -26,11 +26,13 @@ final class MainTabBarController: UITabBarController {
         
         let basketVC = UINavigationController(rootViewController: factory.makeBasketViewController())
         basketVC.tabBarItem = UITabBarItem(title: "Basket", image: UIImage(systemName: "cart"), tag: 1)
+        basketVC.tabBarItem.badgeColor = .systemGreen
 
         viewControllers = [bulletinVC, basketVC]
 
         tabBar.tintColor = .systemGreen
         tabBar.unselectedItemTintColor = .gray
         tabBar.backgroundColor = .white
+        
     }
 }

@@ -8,8 +8,8 @@
 import Foundation
 import RxSwift
 
-protocol BulletinViewModelProtocol: AnyObject {
-    var view: BulletinViewProtocol? { get set }
+protocol BulletinViewModelDelegate: AnyObject {
+    var view: BulletinViewDelegate? { get set }
     var leagues: [League] { get }
     var matches: [Match] { get }
     var betSelected: PublishSubject<MatchBet> { get }
@@ -17,12 +17,13 @@ protocol BulletinViewModelProtocol: AnyObject {
     func fetchLeagues()
     func fetchMatches(leagueKey: String)
     func selectBet(_ bet: MatchBet)
+    func clearAllSelectedOdds()
 }
 
-final class BulletinViewModel: BulletinViewModelProtocol {
+final class BulletinViewModel: BulletinViewModelDelegate {
 
-    weak var view: BulletinViewProtocol?
-    private let apiClient: APIClientProtocol
+    weak var view: BulletinViewDelegate?
+    private let apiClient: APIClientDelegate
     private let disposeBag = DisposeBag()
 
     var leagues: [League] = []
@@ -30,7 +31,7 @@ final class BulletinViewModel: BulletinViewModelProtocol {
     let betSelected = PublishSubject<MatchBet>()
     private var selectedOdds: [String: String] = [:]
 
-    init(apiClient: APIClientProtocol) {
+    init(apiClient: APIClientDelegate) {
         self.apiClient = apiClient
     }
 
@@ -101,5 +102,15 @@ final class BulletinViewModel: BulletinViewModelProtocol {
                 matches[index] = updatedMatch
             }
         }
+    }
+    
+    func clearAllSelectedOdds() {
+        selectedOdds.removeAll()
+        for (index, match) in matches.enumerated() {
+            var updatedMatch = match
+            updatedMatch.selectedOdd = nil
+            matches[index] = updatedMatch
+        }
+        view?.showMatches()
     }
 }

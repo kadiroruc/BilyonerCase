@@ -30,7 +30,6 @@ final class DIContainer {
     func resolve<T>() -> T {
         let key = String(describing: T.self)
         
-        // Check if it's a singleton first
         if singletonKeys.contains(key), let singleton = singletons[key] as? T {
             return singleton
         }
@@ -39,7 +38,6 @@ final class DIContainer {
             fatalError("There is no registered factory for '\(key)'")
         }
         
-        // If it was registered as singleton, store it
         if singletonKeys.contains(key) {
             singletons[key] = instance
         }

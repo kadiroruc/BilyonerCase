@@ -17,6 +17,7 @@ final class AppCoordinator {
     init(window: UIWindow) {
         self.window = window
         self.factory = AppFactory()
+        setupUserStateObserver()
     }
 
     func start() {
@@ -38,6 +39,31 @@ final class AppCoordinator {
     private func showMainFlow() {
         let tabBarController = MainTabBarController(factory: factory)
         window.rootViewController = tabBarController
+    }
+    
+    private func setupUserStateObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(userStateDidChange),
+            name: UserManager.userStateDidChangeNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func userStateDidChange() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            if self.userManager.isUserAvailable {
+                self.showMainFlow()
+            } else {
+                self.showAuthFlow()
+            }
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
