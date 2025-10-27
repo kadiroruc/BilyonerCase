@@ -20,7 +20,9 @@ protocol BulletinViewModelDelegate: AnyObject {
     func clearAllSelectedOdds()
 }
 
-final class BulletinViewModel: BulletinViewModelDelegate {
+// MARK: - BulletinViewModel
+
+final class BulletinViewModel {
 
     weak var view: BulletinViewDelegate?
     private let apiClient: APIClientDelegate
@@ -34,7 +36,13 @@ final class BulletinViewModel: BulletinViewModelDelegate {
     init(apiClient: APIClientDelegate) {
         self.apiClient = apiClient
     }
+    
+}
 
+// MARK: - BulletinViewModelDelegate
+
+extension BulletinViewModel: BulletinViewModelDelegate{
+    
     func fetchLeagues() {
         view?.showLoading(true)
         apiClient.request(OddsAPI.getLeagues, type: [League].self)
@@ -74,6 +82,8 @@ final class BulletinViewModel: BulletinViewModelDelegate {
         } else {
             betSelected.onNext(bet)
         }
+        
+        AnalyticsManager.shared.log(.addToCart(matchID: bet.match.id, oddType: bet.oddType, value: bet.value))
     }
     
     private func updateMatchWithSelectedOdd(_ bet: MatchBet) {

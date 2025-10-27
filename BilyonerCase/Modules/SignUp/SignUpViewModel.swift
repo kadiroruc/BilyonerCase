@@ -14,6 +14,8 @@ protocol SignUpViewModelDelegate: AnyObject {
     func signUp(name: String, email: String, password: String)
 }
 
+// MARK: - SignUpViewModel
+
 final class SignUpViewModel {
 
     weak var view: SignUpViewDelegate?
@@ -26,6 +28,7 @@ final class SignUpViewModel {
 }
 
 // MARK: - SignUpViewModelDelegate
+
 extension SignUpViewModel: SignUpViewModelDelegate {
 
     func signUp(name: String, email: String, password: String) {

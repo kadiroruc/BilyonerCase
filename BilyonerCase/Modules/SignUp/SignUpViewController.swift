@@ -50,6 +50,7 @@ protocol SignUpViewDelegate: AnyObject {
     func showSuccess(_ user: User)
 }
 
+// MARK: - SignUpViewController
 
 final class SignUpViewController: UIViewController {
     
@@ -203,8 +204,9 @@ final class SignUpViewController: UIViewController {
         viewModel.signUp(name: name, email: email, password: password)
     }
 
-
 }
+
+// MARK: - SignUpViewDelegate
 
 extension SignUpViewController: SignUpViewDelegate {
     func showLoading(_ show: Bool) {

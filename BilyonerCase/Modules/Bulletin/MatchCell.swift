@@ -34,6 +34,8 @@ fileprivate enum Colors {
     static let cellBackgroundColor = UIColor.secondarySystemBackground
 }
 
+// MARK: - MatchCell
+
 final class MatchCell: UICollectionViewCell {
     static let identifier = "MatchCell"
     weak var delegate: MatchCellDelegate?

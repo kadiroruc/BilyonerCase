@@ -7,6 +7,8 @@
 
 import UIKit
 
+// MARK: - Constants
+
 fileprivate enum Layout {
     static let collectionViewSpacing: CGFloat = 12
     static let standardMargin: CGFloat = 16

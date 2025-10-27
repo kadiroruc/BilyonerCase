@@ -43,6 +43,8 @@ protocol LoginViewDelegate: AnyObject {
     func showSuccess(_ user: User)
 }
 
+// MARK: - LoginViewController
+
 final class LoginViewController: UIViewController {
 
     private let viewModel: LoginViewModelDelegate
@@ -210,6 +212,7 @@ final class LoginViewController: UIViewController {
 }
 
 // MARK: - LoginViewDelegate
+
 extension LoginViewController: LoginViewDelegate {
     func showLoading(_ show: Bool) {
         show ? self.activityIndicator.startAnimating() : self.activityIndicator.stopAnimating()

@@ -23,7 +23,9 @@ protocol BasketViewModelDelegate: AnyObject {
     func playNow()
 }
 
-final class BasketViewModel: BasketViewModelDelegate {
+// MARK: - BasketViewModel
+
+final class BasketViewModel{
     weak var view: BasketViewDelegate?
     
     private let disposeBag = DisposeBag()
@@ -31,6 +33,13 @@ final class BasketViewModel: BasketViewModelDelegate {
     private(set) var couponAmount: Double = 50.0
     private(set) var balance: Double = 1000.0
     private weak var bulletinVM: BulletinViewModelDelegate?
+    private var isPlaying: Bool = false
+
+}
+
+// MARK: - BasketViewModelDelegate
+
+extension BasketViewModel: BasketViewModelDelegate{
 
     func bind(to bulletinVM: BulletinViewModelDelegate) {
         self.bulletinVM = bulletinVM
@@ -40,14 +49,14 @@ final class BasketViewModel: BasketViewModelDelegate {
             })
             .disposed(by: disposeBag)
     }
-
+    
     private func addOrUpdateBet(_ bet: MatchBet) {
         if let index = bets.firstIndex(where: { $0.match.id == bet.match.id }) {
             if bet.match.selectedOdd != nil {
                 bets[index] = bet
             }else{
                 bets.remove(at: index)
-            }  
+            }
         } else {
             bets.append(bet)
         }
@@ -75,6 +84,10 @@ final class BasketViewModel: BasketViewModelDelegate {
     }
     
     func clearAllBets() {
+        if !isPlaying{
+            AnalyticsManager.shared.log(.removeAllFromCart(bets: bets))
+            isPlaying = false
+        }
         bets.removeAll()
         bulletinVM?.clearAllSelectedOdds()
         view?.showBets()
@@ -90,6 +103,7 @@ final class BasketViewModel: BasketViewModelDelegate {
         
         balance -= couponAmount
         clearAllBets()
+        isPlaying = true
         
         view?.showSuccess("Your bet has been placed successfully")
     }

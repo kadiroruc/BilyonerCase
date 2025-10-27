@@ -24,6 +24,8 @@ fileprivate enum Colors {
     static let textColor = UIColor.label
 }
 
+// MARK: - LeagueCell
+
 final class LeagueCell: UICollectionViewCell {
     static let identifier = "LeagueCell"
 
