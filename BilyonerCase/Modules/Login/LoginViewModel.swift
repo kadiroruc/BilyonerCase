@@ -14,6 +14,8 @@ protocol LoginViewModelDelegate: AnyObject {
     func login(email: String, password: String)
 }
 
+// MARK: - LoginViewModel
+
 final class LoginViewModel {
 
     weak var view: LoginViewDelegate?
@@ -26,6 +28,7 @@ final class LoginViewModel {
 }
 
 // MARK: - LoginViewModelDelegate
+
 extension LoginViewModel: LoginViewModelDelegate {
 
     func login(email: String, password: String) {

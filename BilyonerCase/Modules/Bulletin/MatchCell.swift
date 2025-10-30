@@ -7,6 +7,9 @@
 
 import UIKit
 
+protocol MatchCellDelegate: AnyObject {
+    func matchCell(_ cell: MatchCell, didSelectBet bet: MatchBet)
+}
 // MARK: - Constants
 
 fileprivate enum Layout {
@@ -31,8 +34,12 @@ fileprivate enum Colors {
     static let cellBackgroundColor = UIColor.secondarySystemBackground
 }
 
+// MARK: - MatchCell
+
 final class MatchCell: UICollectionViewCell {
     static let identifier = "MatchCell"
+    weak var delegate: MatchCellDelegate?
+    private var currentMatch: Match?
 
     private let leagueLabel: UILabel = {
         let leagueLabel = UILabel()
@@ -77,15 +84,17 @@ final class MatchCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = Colors.cellBackgroundColor
-        contentView.layer.cornerRadius = Layout.cornerRadius
-        contentView.clipsToBounds = true
         setupUI()
+        setupActions()
     }
 
     required init?(coder: NSCoder) { fatalError() }
 
     private func setupUI() {
+        contentView.backgroundColor = .secondarySystemBackground
+        contentView.layer.cornerRadius = 12
+        contentView.clipsToBounds = true
+        
         [leagueLabel, teamsLabel, timeLabel, oddsStack].forEach { contentView.addSubview($0) }
 
         NSLayoutConstraint.activate([
@@ -111,6 +120,42 @@ final class MatchCell: UICollectionViewCell {
             oddsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Layout.standardPadding)
         ])
     }
+    
+    private func setupActions() {
+        ms1Button.addTarget(self, action: #selector(oddTapped(_:)), for: .touchUpInside)
+        msxButton.addTarget(self, action: #selector(oddTapped(_:)), for: .touchUpInside)
+        ms2Button.addTarget(self, action: #selector(oddTapped(_:)), for: .touchUpInside)
+    }
+    
+    @objc private func oddTapped(_ sender: OddsButton) {
+        guard let match = currentMatch else { return }
+        
+        let oddType: String
+        let value: String
+
+        switch sender {
+        case ms1Button:
+            oddType = "MS1"
+            value = ms1Button.titleLabel?.text?.components(separatedBy: "\n").first ?? ""
+        case msxButton:
+            oddType = "MSX"
+            value = msxButton.titleLabel?.text?.components(separatedBy: "\n").first ?? ""
+        case ms2Button:
+            oddType = "MS2"
+            value = ms2Button.titleLabel?.text?.components(separatedBy: "\n").first ?? ""
+        default:
+            return
+        }
+        
+        let bet = MatchBet(match: match, oddType: oddType, value: value)
+        delegate?.matchCell(self, didSelectBet: bet)
+    }
+
+    private func resetSelection() {
+        ms1Button.setSelectedTop(false)
+        msxButton.setSelectedTop(false)
+        ms2Button.setSelectedTop(false)
+    }
 
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -120,6 +165,8 @@ final class MatchCell: UICollectionViewCell {
     }
 
     func configure(with match: Match) {
+        currentMatch = match
+        
         leagueLabel.text = match.sportTitle
         teamsLabel.text = "\(match.homeTeam) vs \(match.awayTeam)"
         timeLabel.text = match.commenceTime.formattedToLocalString()
@@ -128,12 +175,32 @@ final class MatchCell: UICollectionViewCell {
             if outcomes.count == 2 {
                 ms1Button.setOddTitle(odd: String(format: "%.2f", outcomes[0].price), label: "MS1")
                 msxButton.setOddTitle(odd: "X", label: "MSX")
+                msxButton.isEnabled = false
                 ms2Button.setOddTitle(odd: String(format: "%.2f", outcomes[1].price), label: "MS2")
             } else if outcomes.count == 3 {
                 ms1Button.setOddTitle(odd: String(format: "%.2f", outcomes[0].price), label: "MS1")
                 msxButton.setOddTitle(odd: String(format: "%.2f", outcomes[2].price), label: "MSX")
+                msxButton.isEnabled = true
                 ms2Button.setOddTitle(odd: String(format: "%.2f", outcomes[1].price), label: "MS2")
             }
+        }
+        
+        if let selectedOdd = match.selectedOdd {
+            switch selectedOdd {
+            case "MS1":
+                resetSelection()
+                ms1Button.setSelectedTop(true)
+            case "MS2":
+                resetSelection()
+                ms2Button.setSelectedTop(true)
+            case "MSX":
+                resetSelection()
+                msxButton.setSelectedTop(true)
+            default:
+                resetSelection()
+            }
+        } else {
+            resetSelection()
         }
     }
 }

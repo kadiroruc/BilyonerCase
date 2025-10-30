@@ -1,5 +1,5 @@
 //
-//  HomeViewController.swift
+//  BulletinViewController.swift
 //  BilyonerCase
 //
 //  Created by Abdulkadir Oruç on 20.10.2025.
@@ -26,19 +26,21 @@ fileprivate enum UI {
     static let searchPlaceholder = "Search League"
     static let errorAlertTitle = "Error"
     static let errorAlertButtonTitle = "OK"
+    static let logoutBarButtonItemImage = "rectangle.portrait.and.arrow.right"
 }
 
-protocol HomeViewDelegate: AnyObject {
+protocol BulletinViewDelegate: AnyObject {
     func showLoading(_ show: Bool)
     func showError(_ message: String)
     func showLeagues(_ leagues: [League])
     func showMatches()
 }
 
+// MARK: - BulletinViewController
 
-final class HomeViewController: UIViewController {
+final class BulletinViewController: UIViewController {
 
-    private let viewModel: HomeViewModelDelegate
+    private let viewModel: BulletinViewModelDelegate
     private var filteredLeagues: [League] = []
     private var selectedLeague: League?
 
@@ -72,12 +74,19 @@ final class HomeViewController: UIViewController {
         activityIndicator.accessibilityIdentifier = "BulletinViewController.activityIndicator"
         return activityIndicator
     }()
+    
+    private lazy var logoutBarButtonItem: UIBarButtonItem = {
+        let logoutBarButtonItem = UIBarButtonItem(image: UIImage(systemName: UI.logoutBarButtonItemImage), style: .done, target: self, action: #selector(logoutBarButtonItemTapped))
+        logoutBarButtonItem.accessibilityIdentifier = "BulletinViewController.logoutBarButtonItem"
+        logoutBarButtonItem.tintColor = .systemGreen
+        return logoutBarButtonItem
+    }()
 
     private let searchController = UISearchController(searchResultsController: nil)
 
     // MARK: - Init
 
-    init(viewModel: HomeViewModelDelegate) {
+    init(viewModel: BulletinViewModelDelegate) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.viewModel.view = self
@@ -98,6 +107,8 @@ final class HomeViewController: UIViewController {
 
     private func setupUI() {
         view.backgroundColor = .systemBackground
+        navigationItem.rightBarButtonItem = logoutBarButtonItem
+        navigationItem.title = "Bulletin"
         [leaguesCollectionView, matchesCollectionView, activityIndicator].forEach { view.addSubview($0) }
 
         NSLayoutConstraint.activate([
@@ -136,11 +147,15 @@ final class HomeViewController: UIViewController {
         searchController.searchBar.placeholder = UI.searchPlaceholder
         navigationItem.searchController = searchController
     }
+    
+    @objc func logoutBarButtonItemTapped(){
+        UserManager.shared.logout()
+    }
 }
 
 // MARK: - UICollectionView
 
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension BulletinViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == leaguesCollectionView { return filteredLeagues.count }
@@ -171,6 +186,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             let match = viewModel.matches[indexPath.item]
             cell.configure(with: match)
+            cell.delegate = self
             return cell
         }
 
@@ -196,9 +212,9 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
 }
 
-// MARK: - HomeViewDelegate
+// MARK: - BulletinViewDelegate
 
-extension HomeViewController: HomeViewDelegate {
+extension BulletinViewController: BulletinViewDelegate {
 
     func showLoading(_ show: Bool) {
         show ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
@@ -226,7 +242,7 @@ extension HomeViewController: HomeViewDelegate {
 
 // MARK: - Search
 
-extension HomeViewController: UISearchResultsUpdating {
+extension BulletinViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text, !text.isEmpty else {
             filteredLeagues = viewModel.leagues
@@ -236,4 +252,14 @@ extension HomeViewController: UISearchResultsUpdating {
         filteredLeagues = viewModel.leagues.filter { $0.title.lowercased().contains(text.lowercased()) }
         leaguesCollectionView.reloadData()
     }
+}
+
+// MARK: - MatchCellDelegate
+
+extension BulletinViewController: MatchCellDelegate {
+    func matchCell(_ cell: MatchCell, didSelectBet bet: MatchBet) {
+        viewModel.selectBet(bet)
+        matchesCollectionView.reloadData()
+    }
+
 }

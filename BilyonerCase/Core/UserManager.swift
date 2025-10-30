@@ -15,7 +15,9 @@ protocol UserManagerDelegate: AnyObject {
     func logout()
 }
 
-final class UserManager: UserManagerDelegate {
+// MARK: - UserManager
+
+final class UserManager {
     static let shared = UserManager()
 
     static let userStateDidChangeNotification = Notification.Name("UserManager.userStateDidChange")
@@ -40,7 +42,12 @@ final class UserManager: UserManagerDelegate {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
+    
+}
 
+// MARK: - UserManagerDelegate
+
+extension UserManager: UserManagerDelegate{
     var isUserAvailable: Bool { cachedIsUserAvailable }
 
     var currentUser: User? { Auth.auth().currentUser }
@@ -58,6 +65,9 @@ final class UserManager: UserManagerDelegate {
             try Auth.auth().signOut()
             refresh()
         } catch {
+            print("Logout error: \(error.localizedDescription)")
+            
+            refresh()
         }
     }
 }

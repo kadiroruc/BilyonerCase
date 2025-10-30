@@ -11,6 +11,8 @@ final class DIContainer {
     static let shared = DIContainer()
     
     private var factories: [String: () -> Any] = [:]
+    private var singletons: [String: Any] = [:]
+    private var singletonKeys: Set<String> = []
     
     private init() {}
 
@@ -18,12 +20,28 @@ final class DIContainer {
         let key = String(describing: T.self)
         factories[key] = factory
     }
+    
+    func registerSingleton<T>(_ factory: @escaping () -> T) {
+        let key = String(describing: T.self)
+        factories[key] = factory
+        singletonKeys.insert(key)
+    }
 
     func resolve<T>() -> T {
         let key = String(describing: T.self)
+        
+        if singletonKeys.contains(key), let singleton = singletons[key] as? T {
+            return singleton
+        }
+        
         guard let factory = factories[key], let instance = factory() as? T else {
             fatalError("There is no registered factory for '\(key)'")
         }
+        
+        if singletonKeys.contains(key) {
+            singletons[key] = instance
+        }
+        
         return instance
     }
 }

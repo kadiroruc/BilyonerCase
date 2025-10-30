@@ -13,8 +13,14 @@ protocol APIClientDelegate {
     func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) -> Single<T>
 }
 
-final class APIClient: APIClientDelegate {
+// MARK: - APIClient
 
+final class APIClient {
+
+}
+
+extension APIClient: APIClientDelegate {
+    
     func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) -> Single<T> {
         return Single.create { single in
             let url = endpoint.baseURL + endpoint.path

@@ -26,6 +26,8 @@ fileprivate enum Colors {
     static let labelTextColor = UIColor.white
 }
 
+// MARK: - OddsButton
+
 final class OddsButton: UIButton {
     
     private let bottomView: UIView = {
@@ -84,7 +86,7 @@ final class OddsButton: UIButton {
         )
         setAttributedTitle(title, for: .normal)
     }
-
+    
     func setSelectedTop(_ selected: Bool) {
         if selected && backgroundColor == .systemGreen{
             backgroundColor = .white
