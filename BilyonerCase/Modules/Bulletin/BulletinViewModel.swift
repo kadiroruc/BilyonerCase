@@ -47,12 +47,16 @@ extension BulletinViewModel: BulletinViewModelDelegate{
         view?.showLoading(true)
         apiClient.request(OddsAPI.getLeagues, type: [League].self)
             .subscribe(onSuccess: { [weak self] leagues in
-                self?.view?.showLoading(false)
-                self?.leagues = leagues.filter({ $0.has_outrights == false })
-                self?.view?.showLeagues(self?.leagues ?? [])
+                guard let self = self else { return }
+                
+                self.view?.showLoading(false)
+                self.leagues = leagues.filter({ $0.has_outrights == false })
+                self.view?.showLeagues(self.leagues)
             }, onFailure: { [weak self] error in
-                self?.view?.showLoading(false)
-                self?.view?.showError(error.localizedDescription)
+                guard let self = self else { return }
+                
+                self.view?.showLoading(false)
+                self.view?.showError(error.localizedDescription)
             })
             .disposed(by: disposeBag)
     }
@@ -61,13 +65,17 @@ extension BulletinViewModel: BulletinViewModelDelegate{
         view?.showLoading(true)
         apiClient.request(OddsAPI.getMatches(leagueKey: leagueKey), type: [Match].self)
             .subscribe(onSuccess: { [weak self] matches in
-                self?.view?.showLoading(false)
-                self?.matches = matches
-                self?.restoreSelectedOdds()
-                self?.view?.showMatches()
+                guard let self = self else { return }
+                
+                self.view?.showLoading(false)
+                self.matches = matches
+                self.restoreSelectedOdds()
+                self.view?.showMatches()
             }, onFailure: { [weak self] error in
-                self?.view?.showLoading(false)
-                self?.view?.showError(error.localizedDescription)
+                guard let self = self else { return }
+                
+                self.view?.showLoading(false)
+                self.view?.showError(error.localizedDescription)
             })
             .disposed(by: disposeBag)
     }
