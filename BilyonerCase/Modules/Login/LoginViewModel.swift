@@ -50,6 +50,13 @@ extension LoginViewModel: LoginViewModelDelegate {
                            DispatchQueue.main.async {
                                owner.view?.showLoading(false)
                                owner.view?.showSuccess(user)
+
+                                                              
+                               UserManager.shared.refresh()
+                               NotificationCenter.default.post(
+                                   name: UserManager.userStateDidChangeNotification,
+                                   object: nil
+                               )
                            }
                        },
                        onFailure: { owner, error in
